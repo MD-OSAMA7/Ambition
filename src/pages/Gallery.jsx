@@ -12,7 +12,7 @@ import TopBar from "../components/TopBar";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-const API_URL = "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Gallery = () => {
   const [gallery, setGallery] = useState([]);

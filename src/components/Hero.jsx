@@ -8,7 +8,7 @@ import {
   Users,
 } from "lucide-react";
 
-const API_URL = "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const defaultImages = ["/hero.png", "/hero2.png", "/hero3.png", "/hero4.png"];
 
