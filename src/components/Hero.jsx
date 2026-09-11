@@ -1,143 +1,521 @@
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
-  GraduationCap,
-  BookOpen,
   BarChart3,
-  Users,
+  BookOpen,
+  GraduationCap,
   Trophy,
+  Users,
 } from "lucide-react";
 
+const API_URL = "http://localhost:5000";
+
+const defaultImages = ["/hero.png", "/hero2.png", "/hero3.png", "/hero4.png"];
+
+/* =========================================
+   IMAGE URL HELPER
+   Supports:
+   1. Old local image string
+   2. Cloudinary object { url, publicId }
+========================================= */
+const getImageUrl = (image) => {
+  if (!image) return "";
+
+  if (typeof image === "string") {
+    return image;
+  }
+
+  if (typeof image === "object") {
+    return image.url || "";
+  }
+
+  return "";
+};
+
+/* =========================================
+   HERO FEATURES
+========================================= */
 const features = [
   {
     icon: GraduationCap,
-    title: "Experienced",
-    subtitle: "Faculty",
+    line1: "Experienced",
+    line2: "Faculty",
   },
   {
     icon: BookOpen,
-    title: "Concept Based",
-    subtitle: "Learning",
+    line1: "Concept Based",
+    line2: "Learning",
   },
   {
     icon: BarChart3,
-    title: "Regular Test",
-    subtitle: "Series",
+    line1: "Regular Test",
+    line2: "Series",
   },
   {
     icon: Users,
-    title: "Personal",
-    subtitle: "Attention",
+    line1: "Personal",
+    line2: "Attention",
   },
   {
     icon: Trophy,
-    title: "Proven",
-    subtitle: "Results",
+    line1: "Proven",
+    line2: "Results",
   },
 ];
 
 const Hero = () => {
+  const [images, setImages] = useState(defaultImages);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  /* =========================================
+     FETCH HERO IMAGES
+  ========================================= */
+  useEffect(() => {
+    const fetchHero = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/hero/public`);
+        const data = await response.json();
+
+        if (data.success && data.hero?.images?.length) {
+          const apiImages = data.hero.images.map(getImageUrl).filter(Boolean);
+
+          if (apiImages.length > 0) {
+            setImages(apiImages);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch hero:", error);
+
+        // fallback images
+        setImages(defaultImages);
+      }
+    };
+
+    fetchHero();
+  }, []);
+
+  /* =========================================
+     AUTO SLIDER
+  ========================================= */
+  useEffect(() => {
+    if (images.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => {
+        return (prevIndex + 1) % images.length;
+      });
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [images]);
+
+  /* =========================================
+     KEEP INDEX SAFE
+  ========================================= */
+  useEffect(() => {
+    if (currentIndex >= images.length) {
+      setCurrentIndex(0);
+    }
+  }, [images, currentIndex]);
+
+  const currentImage = images[currentIndex] || defaultImages[0];
+
   return (
-    <section className="relative overflow-hidden bg-[#004d3b] text-white">
-      {/* Background Image */}
-      <img
-        src="/hero.jpg"
-        alt="Students at Ambition Classes"
-        className="absolute inset-0 h-full w-full object-cover"
-      />
+    <section className="relative overflow-hidden">
+      {/* =========================================
+          HERO CONTAINER
+      ========================================= */}
+      <div
+        className="
+          relative
+          h-[430px]
+          xs:h-[510px]
+          sm:h-[520px]
+          md:h-[530px]
+          lg:h-[540px]
+          xl:h-[550px]
+        "
+      >
+        {/* =========================================
+            BACKGROUND IMAGE
+        ========================================= */}
+        <img
+          src={currentImage}
+          alt="Ambition Classes"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
 
-      {/* Dark Green Overlay */}
-      <div className="absolute inset-0 bg-linear-to-r from-[#004d3b] via-[#00563f]/90 to-transparent" />
+        {/* =========================================
+            IMAGE OVERLAY
+        ========================================= */}
+        <div className="absolute inset-100 bg-black/25" />
 
-      {/* Content */}
-      <div className="relative mx-auto max-w-[1550px] px-5 sm:px-8 lg:px-10">
-        <div className="flex min-h-125 items-center py-10 sm:min-h-132.5 lg:min-h-140">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#003f31]/99 via-[#00553f]/30 to-[#00553f]/10" />
 
-          <div className="w-full max-w-155">
-
-            {/* Small Heading */}
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.15em] text-yellow-400 sm:text-sm">
-              Simri Bakhtiyarpur's Trusted
+        {/* =========================================
+            HERO CONTENT
+        ========================================= */}
+        <div className="relative z-10 mx-auto flex h-[420px] sm:h-full max-w-[1550px] items-center px-4 sm:px-6 lg:px-8">
+          <div
+            className="
+              w-full
+              max-w-[760px]
+              py-8
+              sm:py-10
+              md:py-12
+              lg:py-0
+            "
+          >
+            {/* =========================================
+                TOP LABEL
+            ========================================= */}
+            <p
+              className="
+                text-[9px]
+                font-bold
+                font-sans
+                uppercase
+                tracking-[0.16em]
+                text-amber-500
+                xs:text-[10px]
+                sm:text-xs
+                md:text-sm
+              "
+            >
+              SIMRI BAKHTIYARPUR'S TRUSTED
             </p>
 
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.15em] text-yellow-400 sm:text-sm">
-              Educational Institution
+            <p
+              className="
+                font-sans
+                text-[8px]
+                font-bold
+                uppercase
+                tracking-[0.16em]
+                text-amber-500
+                xs:text-[9px]
+                sm:text-xs
+                md:text-sm
+              "
+            >
+              EDUCATIONAL INSTITUTION
             </p>
 
-            {/* Main Heading */}
-            <h2 className="text-4xl font-extrabold uppercase leading-[0.95] sm:text-5xl lg:text-6xl">
-              <span className="block text-white">
-                Turn Your
-              </span>
+            {/* =========================================
+                MAIN HEADING
+            ========================================= */}
+            <h1
+              className="
+                mt-2
+                text-[28px]
+                font-black
+                leading-[0.98]
+                text-white
 
-              <span className="block text-yellow-400">
-                Potential
-              </span>
+                xs:text-[27px]
 
-              <span className="block text-white">
-                Into <span className="text-yellow-400">Success.</span>
-              </span>
-            </h2>
+                sm:text-[35px]
 
-            {/* Description */}
-            <p className="mt-4 max-w-137.5 text-sm leading-relaxed text-white/90 sm:text-base">
-              Focused learning. Experienced teachers.
+                md:text-[43px]
+
+                lg:text-[51px]
+
+                xl:text-[55px]
+               font-sans
+              "
+            >
+              TURN YOUR
               <br />
-              A clear path towards academic and competitive success.
+              <span className="text-amber-500">POTENTIAL</span>
+              <br />
+              INTO
+              <span className="text-amber-500"> SUCCESS.</span>
+            </h1>
+
+            {/* =========================================
+                DESCRIPTION
+            ========================================= */}
+            <p
+              className="
+                mt-3
+                
+                text-[9px]
+            font-body
+                text-white/90
+
+                xs:text-[11px]
+
+                sm:text-sm
+                
+
+                md:max-w-[680px]
+              "
+            >
+              We convert your potential into success with
+              <br />
+              <span>
+                quality education, experienced faculty and concept-based
+                learning.
+              </span>
             </p>
 
-            {/* Categories */}
-            <p className="mt-3 text-xs font-bold text-yellow-300 sm:text-sm">
-              Schooling{" "}
-              <span className="px-1 text-white">|</span>
-              Coaching{" "}
-              <span className="px-1 text-white">|</span>
-              Competitive Preparation
+            {/* Small Tagline */}
+            <p
+              className="
+                mt-3
+                text-[10px]
+                font-medium
+               text-amber-500
+tracking-wider
+                xs:text-[10px]
+font-sans
+                sm:text-[14px]
+              "
+            >
+              Schooling | Coaching | Competitive Preparation
             </p>
 
-            {/* Buttons */}
-            <div className="mt-5 flex flex-wrap gap-3">
+            {/* =========================================
+                BUTTONS
+            ========================================= */}
+            <div
+              className="
+                mt-4
+                flex
+                flex-wrap
+                gap-1
+
+                sm:mt-5
+                sm:gap-3
+              "
+            >
               <a
-                href="#"
-                className="flex items-center gap-2 rounded-md bg-yellow-400 px-4 py-2.5 text-xs font-bold text-[#00563f] transition hover:bg-yellow-300 sm:px-5 sm:text-sm"
+                href="#initiatives"
+                className="
+                  inline-flex
+                  items-center
+                  justify-center
+                  gap-1.5
+                  rounded-md
+                  bg-amber-500
+                 
+                  px-0.5
+                  py-1.5
+                  text-[10px]
+                  font-bold
+                  font-sans
+                  text-emerald-800
+                  shadow-md
+                  transition
+                  hover:bg-amber-600
+
+                  xs:px-3.5
+                  xs:py-2.5
+                  xs:text-[10px]
+
+                  sm:px-4
+                  sm:py-2.5
+                  sm:text-xs
+
+                  md:px-5
+                "
               >
                 Explore Ambition Classes
-                <ArrowRight size={15} />
+                <ArrowRight size={12} className="sm:size-[14px]" />
               </a>
 
               <a
-                href="#"
-                className="flex items-center gap-2 rounded-md bg-white px-4 py-2.5 text-xs font-bold text-[#00563f] transition hover:bg-gray-100 sm:px-5 sm:text-sm"
+                href="/contact"
+                className="
+                  inline-flex
+                  items-center
+                  justify-center
+                  gap-1.5
+                  rounded-md
+                  border
+                  border-white/50
+                  bg-white
+                  px-3
+                  py-2
+                  text-[10px]
+                font-sans
+                  font-bold
+                  text-emerald-800
+                  backdrop-blur-sm
+                  transition
+                  hover:bg-white-200
+                 
+
+                  xs:px-3.5
+                  xs:py-2.5
+                  xs:text-[10px]
+
+                  sm:px-4
+                  sm:py-2.5
+                  sm:text-xs
+
+                  md:px-5
+                "
               >
                 Enquire Now
-                <ArrowRight size={15} />
+                <ArrowRight size={13} className="sm:size-[15px]" />
               </a>
             </div>
 
-            {/* Features */}
-            <div className="mt-7 grid max-w-[560px] grid-cols-3 gap-4 sm:grid-cols-5 sm:gap-3">
+            {/* =========================================
+                FEATURES
+                5 ITEMS - SAME ROW
+                2 LINE TEXT
+            ========================================= */}
+            <div
+              className="
+                mt-5
+                flex
+                
+                gap-5
+
+                xs:mt-6
+                xs:gap-1.5
+font-sans
+                sm:gap-3
+
+                md:gap-5
+
+                lg:max-w-[720px]
+              "
+            >
               {features.map((feature) => {
                 const Icon = feature.icon;
 
                 return (
                   <div
-                    key={feature.title}
-                    className="flex flex-col items-center text-center"
+                    key={`${feature.line1}-${feature.line2}`}
+                    className="
+                      flex
+                      min-w-0
+                      flex-col
+                      items-center
+                      text-center
+                      gap-0
+
+                    "
                   >
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-yellow-400 bg-[#00563f]/70">
-                      <Icon size={21} className="text-white" />
+                    {/* =========================================
+                        ICON CIRCLE
+                    ========================================= */}
+                    <div
+                      className="
+                        flex
+                        h-8
+                        w-8
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-full
+                        border-2
+                        border-amber-500
+
+                        text-white
+
+                        xs:h-9
+                        xs:w-9
+
+                        sm:h-10
+                        sm:w-10
+
+                        md:h-11
+                        md:w-11
+
+                        lg:h-11
+                        lg:w-11
+                      "
+                    >
+                      <Icon
+                        size={14}
+                        className="
+                          xs:size-[15px]
+                          sm:size-[17px]
+                          md:size-[18px]
+                        "
+                      />
                     </div>
 
-                    <p className="mt-2 text-[10px] font-semibold leading-tight text-white sm:text-[11px]">
-                      {feature.title}
-                      <br />
-                      {feature.subtitle}
-                    </p>
+                    {/* =========================================
+                        TWO LINE TEXT
+                    ========================================= */}
+                    <div
+                      className="
+                        mt-1
+                        w-full
+                        text-center
+                        text-[6px]
+                        font-semibold
+                        leading-[9px]
+                        text-white
+
+                        xs:text-[7px]
+                        xs:leading-[10px]
+
+                        sm:mt-1.5
+                        sm:text-[9px]
+                        sm:leading-3
+
+                        md:text-[10px]
+                        md:leading-[13px]
+
+                        lg:text-[10px]
+                      "
+                    >
+                      <div>{feature.line1}</div>
+                      <div>{feature.line2}</div>
+                    </div>
                   </div>
                 );
               })}
             </div>
           </div>
         </div>
+
+        {/* =========================================
+            SLIDER DOTS
+        ========================================= */}
+        {images.length > 1 && (
+          <div
+            className="
+              absolute
+              bottom-3
+              left-1/2
+              z-20
+              flex
+              -translate-x-1/2
+              items-center
+              gap-1.5
+
+              sm:bottom-4
+            "
+          >
+            {images.map((_, index) => (
+              <button
+                key={index}
+                type="button"
+                aria-label={`Go to slide ${index + 1}`}
+                onClick={() => setCurrentIndex(index)}
+                className={`
+                  h-1.5
+                  rounded-full
+                  transition-all
+                  duration-300
+
+                  ${
+                    index === currentIndex
+                      ? "w-6 bg-orange-300"
+                      : "w-1.5 bg-white/60"
+                  }
+                `}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

@@ -1,245 +1,192 @@
-import {
-  Menu,
-  X,
-  ChevronDown,
-  ArrowRight,
-} from "lucide-react";
+import { Menu, X, ArrowRight } from "lucide-react";
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const navLinks = [
   {
     name: "Home",
+    path: "/",
   },
   {
     name: "About Us",
+    path: "/about-us",
   },
   {
     name: "School",
-    dropdown: true,
-    submenu: ["About School", "School Facilities", "Admission"],
+    path: "/school",
   },
   {
     name: "Coaching",
-    dropdown: true,
-    submenu: ["Courses", "Faculty", "Study Material"],
+    path: "/coaching",
   },
   {
     name: "Trust",
-  },
-  {
-    name: "Results",
+    path: "/trust",
   },
   {
     name: "Gallery",
+    path: "/gallery",
   },
   {
     name: "News & Events",
-    dropdown: true,
-    submenu: ["Latest News", "Upcoming Events"],
+    path: "/news-events",
   },
   {
     name: "Contact",
+    path: "/contact",
   },
 ];
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeLink, setActiveLink] = useState("Home");
-  const [openDropdown, setOpenDropdown] = useState(null);
 
-  const handleLinkClick = (name) => {
-    setActiveLink(name);
-    setOpenDropdown(null);
+  // Current browser URL
+  const location = useLocation();
+
+  const handleLinkClick = () => {
     setMenuOpen(false);
   };
 
-  const handleDropdown = (name) => {
-    setActiveLink(name);
-    setOpenDropdown(openDropdown === name ? null : name);
-  };
-
   return (
-    <header className="w-full border-b border-gray-200 bg-white">
-      <div className="mx-auto flex min-h-[72px] max-w-[1550px] items-center justify-between px-4 lg:px-6">
+    <header className="w-full border-b border-gray-200 bg-white font-sans">
+      <div className="mx-auto flex min-h-[50px] max-w-[1550px] items-center justify-between px-4 lg:px-6">
 
-        {/* Logo Section */}
-        <a href="#" className="flex shrink-0 items-center">
-          <div className="hidden sm:flex h-[58px] w-[58px] items-center justify-center overflow-hidden rounded-full">
+        {/* ==================================================
+            LOGO
+        ================================================== */}
+        <Link
+          to="/"
+          onClick={handleLinkClick}
+          className="flex shrink-0 items-center"
+        >
+          <div className="hidden h-[58px] w-[58px] items-center justify-center overflow-hidden rounded-full sm:flex">
             <img
-              src="/logo.svg"
+              src="/logo.png"
               alt="Ambition Classes Logo"
-              className="h-full w-full object-contain"
+              className="mt-0.5 h-full w-full object-contain"
             />
           </div>
 
           <div className="ml-2 leading-none">
-            <h1 className="text-[16px] font-extrabold tracking-tight sm:text-[24px]">
-              <span className="text-[#006341]">AMBITION</span>{" "}
-              <span className="text-red-600">CLASSES</span>
+            <h1 className="font-sans text-[16px] font-extrabold tracking-tight sm:text-[24px]">
+              <span className="font-sans text-emerald-800">
+                AMBITION
+              </span>{" "}
+              <span className="font-sans text-red-700">
+                CLASSES
+              </span>
             </h1>
 
-            <p className="mt-1  text-[6px] font-extrabold tracking-wide text-[#006341] sm:text-[10px]">
+            <p className="mt-1 font-sans text-[6px] font-extrabold tracking-wide text-emerald-800 sm:text-[10px]">
               SCHOOL | COACHING | TRUST
             </p>
-
-            <p className="mt-1 text-[6px] text-[#006341] sm:text-[10px]">
-              We Convert Your Potential into Success...
-            </p>
           </div>
-        </a>
+        </Link>
 
-        {/* Desktop Navigation */}
+        {/* ==================================================
+            DESKTOP NAVIGATION
+        ================================================== */}
         <nav className="hidden items-center gap-5 lg:flex">
-          {navLinks.map((link) => (
-            <div key={link.name} className="relative">
-              {link.dropdown ? (
-                <button
-                  type="button"
-                  onClick={() => handleDropdown(link.name)}
-                  className={`group flex items-center gap-0.5 whitespace-nowrap text-[12px] transition ${
-                    activeLink === link.name
-                      ? "font-bold text-[#006341]"
-                      : "font-medium text-gray-700"
-                  } hover:text-[#006341]`}
-                >
-                  <span>{link.name}</span>
+          {navLinks.map((link) => {
+            const isActive = location.pathname === link.path;
 
-                  <ChevronDown
-                    size={12}
-                    strokeWidth={2}
-                    className={`mt-0.5 transition-transform ${
-                      openDropdown === link.name ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-              ) : (
-                <a
-                  href="#"
-                  onClick={() => handleLinkClick(link.name)}
-                  className={`whitespace-nowrap text-[12px] transition ${
-                    activeLink === link.name
+            return (
+              <div
+                key={link.name}
+                className="relative"
+              >
+                <Link
+                  to={link.path}
+                  onClick={handleLinkClick}
+                  className={`whitespace-nowrap font-sans text-[12px] transition ${
+                    isActive
                       ? "font-bold text-[#006341]"
                       : "font-medium text-gray-700"
                   } hover:text-[#006341]`}
                 >
                   {link.name}
-                </a>
-              )}
+                </Link>
 
-              {/* Desktop Dropdown */}
-              {link.dropdown && openDropdown === link.name && (
-                <div className="absolute left-1/2 top-full z-50 mt-3 w-48 -translate-x-1/2 overflow-hidden rounded-md border border-gray-100 bg-white shadow-lg">
-                  {link.submenu.map((item) => (
-                    <a
-                      key={item}
-                      href="#"
-                      onClick={() => {
-                        setActiveLink(link.name);
-                        setOpenDropdown(null);
-                      }}
-                      className="block border-b border-gray-100 px-4 py-2.5 text-xs text-gray-700 transition last:border-b-0 hover:bg-[#f0f8f5] hover:font-semibold hover:text-[#006341]"
-                    >
-                      {item}
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+                {/* Active underline */}
+                {isActive && (
+                  <span className="absolute -bottom-2 left-0 h-0.5 w-full rounded-full bg-[#006341]" />
+                )}
+              </div>
+            );
+          })}
         </nav>
 
-        {/* Enquire Button */}
-        <a
-          href="#"
-          className="hidden shrink-0 items-center gap-2 rounded-md bg-[#00563f] px-4 py-2.5 text-[12px] font-semibold text-white shadow-sm transition hover:bg-[#004832] xl:flex"
+        {/* ==================================================
+            ENQUIRE BUTTON
+        ================================================== */}
+        <Link
+          to="/contact"
+          onClick={handleLinkClick}
+          className="hidden shrink-0 items-center gap-2 rounded-md bg-[#00563f] px-4 py-2.5 font-sans text-[12px] font-semibold text-white shadow-sm transition hover:bg-[#004832] xl:flex"
         >
-          <span>Enquire Now</span>
-          <ArrowRight size={15} />
-        </a>
+          <span className="font-sans">
+            Enquire Now
+          </span>
 
-        {/* Mobile Menu Button */}
+          <ArrowRight size={15} />
+        </Link>
+
+        {/* ==================================================
+            MOBILE MENU BUTTON
+        ================================================== */}
         <button
           type="button"
           onClick={() => setMenuOpen(!menuOpen)}
           className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-200 text-gray-700 lg:hidden"
           aria-label="Toggle navigation"
         >
-          {menuOpen ? <X size={22} /> : <Menu size={22} />}
+          {menuOpen ? (
+            <X size={22} />
+          ) : (
+            <Menu size={22} />
+          )}
         </button>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* ==================================================
+          MOBILE NAVIGATION
+      ================================================== */}
       {menuOpen && (
         <div className="border-t border-gray-200 bg-white px-4 py-2 lg:hidden">
           <nav className="flex flex-col">
-            {navLinks.map((link) => (
-              <div key={link.name}>
-                {link.dropdown ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => handleDropdown(link.name)}
-                      className={`flex w-full items-center justify-between border-b border-gray-100 py-3 text-sm ${
-                        activeLink === link.name
-                          ? "font-bold text-[#006341]"
-                          : "font-medium text-gray-700"
-                      }`}
-                    >
-                      <span>{link.name}</span>
+            {navLinks.map((link) => {
+              const isActive =
+                location.pathname === link.path;
 
-                      <ChevronDown
-                        size={15}
-                        className={`transition-transform ${
-                          openDropdown === link.name
-                            ? "rotate-180"
-                            : ""
-                        }`}
-                      />
-                    </button>
-
-                    {openDropdown === link.name && (
-                      <div className="bg-gray-50 pl-4">
-                        {link.submenu.map((item) => (
-                          <a
-                            key={item}
-                            href="#"
-                            onClick={() => {
-                              setActiveLink(link.name);
-                              setMenuOpen(false);
-                              setOpenDropdown(null);
-                            }}
-                            className="block border-b border-gray-200 py-2.5 text-xs text-gray-600 hover:text-[#006341]"
-                          >
-                            {item}
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <a
-                    href="#"
-                    onClick={() => handleLinkClick(link.name)}
-                    className={`block border-b border-gray-100 py-3 text-sm ${
-                      activeLink === link.name
+              return (
+                <div key={link.name}>
+                  <Link
+                    to={link.path}
+                    onClick={handleLinkClick}
+                    className={`block border-b border-gray-100 py-3 font-sans text-sm ${
+                      isActive
                         ? "font-bold text-[#006341]"
                         : "font-medium text-gray-700"
                     }`}
                   >
                     {link.name}
-                  </a>
-                )}
-              </div>
-            ))}
+                  </Link>
+                </div>
+              );
+            })}
 
             {/* Mobile Enquire Button */}
-            <a
-              href="#"
-              className="my-3 flex items-center justify-center gap-2 rounded-md bg-[#00563f] px-4 py-3 text-sm font-semibold text-white"
+            <Link
+              to="/contact"
+              onClick={handleLinkClick}
+              className="my-3 flex items-center justify-center gap-2 rounded-md bg-[#00563f] px-4 py-3 font-sans text-sm font-semibold text-white"
             >
-              Enquire Now
+              <span className="font-sans">
+                Enquire Now
+              </span>
+
               <ArrowRight size={16} />
-            </a>
+            </Link>
           </nav>
         </div>
       )}

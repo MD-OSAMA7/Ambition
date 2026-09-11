@@ -19,3 +19,14 @@ button,
 a {
   -webkit-tap-highlight-color: transparent;
 }
+
+/* Offer Ticker Animation */
+@keyframes offer-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
