@@ -8,12 +8,7 @@ import {
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const DEFAULT_IMAGES = [
-  "/hero.png",
-  "/hero2.png",
-  "/hero3.png",
-  "/hero4.png",
-];
+const DEFAULT_IMAGES = ["", "", "", ""];
 
 /* =========================================
    IMAGE URL HELPER
