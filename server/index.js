@@ -1,10 +1,11 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-
 import connectDB from "./config/db.js";
+
 import authRoutes from "./routes/authRoutes.js";
 import authMiddleware from "./middleware/authMiddleware.js";
+
 import offerRoutes from "./routes/offerRoutes.js";
 import heroRoutes from "./routes/heroRoutes.js";
 import initiativeRoutes from "./routes/initiativeRoutes.js";
@@ -16,42 +17,82 @@ import brochureRoutes from "./routes/brochureRoutes.js";
 import galleryRoutes from "./routes/galleryRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
 
-
 dotenv.config();
 
 const app = express();
 
 const PORT = process.env.PORT || 5000;
 
-/* Database */
+/* =========================
+   DATABASE
+========================= */
+
 connectDB();
 
-/* Middleware */
-app.use(cors());
+/* =========================
+   CORS
+========================= */
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+    ],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
+
+/* =========================
+   MIDDLEWARE
+========================= */
+
 app.use(express.json());
+
 app.use("/uploads", express.static("uploads"));
 
-/* Routes */
+/* =========================
+   ROUTES
+========================= */
+
 app.use("/api/auth", authRoutes);
+
 app.use("/api/offers", offerRoutes);
+
 app.use("/api/hero", heroRoutes);
+
 app.use("/api/initiatives", initiativeRoutes);
+
 app.use("/api/achievements", achievementRoutes);
+
 app.use("/api/faculty", facultyRoutes);
-app.use("/uploads", express.static("uploads"));
+
 app.use("/api/events", eventRoutes);
+
 app.use("/api/news", newsRoutes);
+
 app.use("/api/brochure", brochureRoutes);
+
 app.use("/api/gallery", galleryRoutes);
+
 app.use("/api/settings", settingsRoutes);
 
-/* Health Check */
+/* =========================
+   HEALTH CHECK
+========================= */
+
 app.get("/api/health", (req, res) => {
   res.json({
     success: true,
     message: "Ambition Classes API is running",
   });
 });
+
+/* =========================
+   AUTH VERIFY
+========================= */
 
 app.get("/api/auth/verify", authMiddleware, (req, res) => {
   res.json({
@@ -61,7 +102,10 @@ app.get("/api/auth/verify", authMiddleware, (req, res) => {
   });
 });
 
-/* Server */
+/* =========================
+   SERVER
+========================= */
+
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
